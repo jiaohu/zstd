@@ -1,0 +1,2 @@
+# zstd
+ZStandard for go
