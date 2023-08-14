@@ -1,17 +1,22 @@
 package zstd
 
 import (
+	"encoding/binary"
+	"encoding/hex"
 	"fmt"
+	"testing"
+
 	"github.com/OneOfOne/xxhash"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestXXHash(t *testing.T) {
 	h := xxhash.New64()
 	// [104 101 108 108 111 239 70 219 55 81 216 233 153]
 	h.Write([]byte("hello"))
-	fmt.Println(h.Sum64())
+	s := make([]byte, 8)
+	binary.LittleEndian.PutUint64(s, h.Sum64())
+	fmt.Println(s)
 }
 
 func TestHash(t *testing.T) {
@@ -51,4 +56,18 @@ func TestFrameHeader_FrameHeaderDescriptor(t *testing.T) {
 	t.Run("DictionaryIDFlag", func(t *testing.T) {
 		assert.Equal(t, byte(3), frame.DictionaryIDFlag())
 	})
+}
+
+func Test_U32And4Bytes(t *testing.T) {
+	a := "FD2FB528"
+	temp, e := hex.DecodeString(a)
+	fmt.Println(e)
+	fmt.Println(temp)
+	a1 := binary.LittleEndian.Uint32(temp)
+	fmt.Println(a1)
+
+	b := uint32(682962941)
+	s := make([]byte, 4)
+	binary.LittleEndian.PutUint32(s, b)
+	println(hex.EncodeToString(s))
 }
